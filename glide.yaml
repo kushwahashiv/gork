@@ -11,6 +11,7 @@ import:
   version: ^1.19.1
 - package: go.uber.org/zap
   version: ^1.4.1
-- package: github.com/mwitkow/go-proto-validators
 - package: github.com/go-redis/redis
   version: ^6.5.0
+- package: github.com/go-ozzo/ozzo-validation
+  version: ^3.1.0

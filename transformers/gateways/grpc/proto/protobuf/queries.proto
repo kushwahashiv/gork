@@ -15,7 +15,6 @@ service Queues {
     rpc List (QueuesCmds.List.Request) returns (QueuesCmds.List.Response);
     rpc Create (QueuesCmds.Create.Request) returns (QueuesCmds.Create.Response);
     rpc Read (QueuesCmds.Read.Request) returns (QueuesCmds.Read.Response);
-    rpc Update (QueuesCmds.Update.Request) returns (QueuesCmds.Update.Response);
     rpc Delete (QueuesCmds.Delete.Request) returns (QueuesCmds.Delete.Response);
 }
 
@@ -24,17 +23,12 @@ message Queue {
 
     string id = 1; // unique ID
     string name = 2; // unique name
-    Settings settings = 3; // settings
+    repeated Setting settings = 3; // settings
     string created_at = 4; // creation time
 
-    message Settings {
-
-        RateLimit rate_limit = 1; // rate limiting
-
-        message RateLimit {
-            uint64 tokens = 1; // number of the tokens available
-            uint32 duration = 2; // time period in seconds
-        }
+    message Setting {
+        string key = 1;
+        string value = 2;
     }
 }
 
@@ -54,7 +48,7 @@ message QueuesCmds {
     message Create {
         message Request {
             string name = 1; // name of the queue
-            Queue.Settings settings = 2; // queue settings
+            repeated Queue.Setting settings = 2; // queue settings
         }
         message Response {
             Queue record = 1; // created queue
@@ -64,22 +58,6 @@ message QueuesCmds {
     message Read {
         message Request {
             string id = 1; // query id
-        }
-        message Response {
-            Queue record = 1; // queue instance
-        }
-    }
-
-    message Update {
-        message Request {
-
-            string id = 1; // query ID
-            Data data = 3; // new data
-
-            message Data {
-                string name = 1; // name of the queue
-                Queue.Settings settings = 2; // queue settings
-            }
         }
         message Response {
             Queue record = 1; // queue instance

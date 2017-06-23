@@ -16,13 +16,11 @@ func NewGateway() (gateway *Gateway) {
 			grpc.UnaryInterceptor(
 				grpc_middleware.ChainUnaryServer(
 					grpc_recovery.UnaryServerInterceptor(),
-					grpc_validator.UnaryServerInterceptor(),
 				),
 			),
 			grpc.StreamInterceptor(
 				grpc_middleware.ChainStreamServer(
 					grpc_recovery.StreamServerInterceptor(),
-					grpc_validator.StreamServerInterceptor(),
 				),
 			),
 		),

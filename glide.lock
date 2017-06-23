@@ -1,10 +1,18 @@
-hash: e6389528784226eb914478ee9bbee37803ae7ccb945a63b0e9de7ea73755737b
-updated: 2017-06-23T14:55:53.88637758+03:00
+hash: 3b6e0c727b15cafadee405302152782657aee83aaf5d3c91dc5f8e553ac8b80b
+updated: 2017-06-23T19:33:29.044265771+03:00
 imports:
+- name: github.com/go-ozzo/ozzo-validation
+  version: d1008ad1fd04ceb5faedaf34881df0c504382706
 - name: github.com/go-redis/redis
   version: e14976b254c5bc5f399dd0ae9314b1d02a176897
+  subpackages:
+  - internal
+  - internal/consistenthash
+  - internal/hashtag
+  - internal/pool
+  - internal/proto
 - name: github.com/gogo/protobuf
-  version: 100ba4e885062801d56799d78530b73b178a78f3
+  version: efccd33a0c20aa078705571d5ddbfa14c8395a63
   subpackages:
   - gogoproto
   - jsonpb
@@ -41,6 +49,10 @@ imports:
   - internal/exit
   - internal/multierror
   - zapcore
+- name: go4.org
+  version: 034d17a462f7b2dcd1a4a73553ec5357ff6e6c6e
+  subpackages:
+  - syncutil
 - name: golang.org/x/net
   version: 5602c733f70afc6dcec6766be0d5034d4c4f14de
   subpackages:

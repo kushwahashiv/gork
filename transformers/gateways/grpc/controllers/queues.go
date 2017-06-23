@@ -12,7 +12,14 @@ import (
 	"google.golang.org/grpc"
 )
 
-// Queues controller
+// NewQueues creates a new instance of Queues.
+func NewQueues(queuesSvc services.Queues) (ctrl *Queues) {
+	return &Queues{
+		queuesSvc: queuesSvc,
+	}
+}
+
+// Queues controller is a proxy that links GRPC gateway with service layer.
 type Queues struct {
 	queuesSvc services.Queues // queues service
 }
