@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package gork_gateways_grpc;
+import public "validator.proto";
+
+option go_package = "proto";
+
+// Collection wraps message types that are used in collection-related methods.
+message Collection {
+
+    // Params represents various parameters that can be applied to database methods
+    // that are working with collections (like pagination).
+    message Params {
+        string cursor = 1;
+        uint32 limit = 2 [(validator.field) = {int_lt: 101}];
+    }
+
+    // Info represents a statistical information returned from database methods
+    // that are working with collections.
+    message Info {
+        string cursor = 1;
+        uint64 total = 2;
+    }
+}

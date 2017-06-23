@@ -1,0 +1,98 @@
+syntax = "proto3";
+package gork_gateways_grpc;
+import "common.proto";
+
+// Queues service is responsible for management of the queues.
+service Queues {
+    rpc List (QueuesCmds.List.Request) returns (QueuesCmds.List.Response);
+    rpc Create (QueuesCmds.Create.Request) returns (QueuesCmds.Create.Response);
+    rpc Read (QueuesCmds.Read.Request) returns (QueuesCmds.Read.Response);
+    rpc Update (QueuesCmds.Update.Request) returns (QueuesCmds.Update.Response);
+    rpc Delete (QueuesCmds.Delete.Request) returns (QueuesCmds.Delete.Response);
+}
+
+// Queue represents a single queue.
+message Queue {
+
+    string id = 1; // unique ID
+    string name = 2; // unique name
+    Settings settings = 3; // settings
+    string created_at = 4; // creation time
+
+    message Settings {
+
+        RateLimit rate_limit = 1; // rate limiting
+
+        message RateLimit {
+            uint64 tokens = 1; // number of the tokens available
+            uint32 duration = 2; // time period in seconds
+        }
+    }
+}
+
+// QueuesCmds is a container that wraps request/response messages of all queue-related RPC commands.
+message QueuesCmds {
+
+    message List {
+        message Request {
+            Collection.Params params = 1;
+        }
+        message Response {
+            Collection.Info info = 1;
+            repeated Queue records = 2; // found records
+        }
+    }
+
+    message Create {
+        message Request {
+            string name = 1; // name of the queue
+            Queue.Settings settings = 2; // queue settings
+        }
+        message Response {
+            Queue record = 1; // created queue
+        }
+    }
+
+    message Read {
+        message Request {
+            oneof identifier {
+                string id = 1; // query id
+                string name = 2; // query name
+            }
+        }
+        message Response {
+            Queue record = 1; // queue instance
+        }
+    }
+
+    message Update {
+        message Request {
+
+            oneof identifier {
+                string id = 1; // query ID
+                string name = 2; // query name
+            }
+            Data data = 3; // new data
+
+            message Data {
+                string name = 1; // name of the queue
+                Queue.Settings settings = 2; // queue settings
+            }
+        }
+        message Response {
+            Queue record = 1; // queue instance
+        }
+    }
+
+    message Delete {
+        message Request {
+            oneof identifier {
+                string id = 1; // query ID
+                string name = 2; // query name
+            }
+        }
+        message Response {
+            bool result = 1; // operation result
+        }
+    }
+}

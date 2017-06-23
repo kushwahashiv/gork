@@ -1,0 +1,14 @@
+package: github.com/gork-io/gork
+import:
+- package: google.golang.org/grpc
+  version: ^1.4.1
+- package: github.com/rs/xid
+  version: ^1.1.0
+- package: github.com/pkg/errors
+  version: ^0.8.0
+- package: github.com/grpc-ecosystem/go-grpc-middleware
+- package: github.com/urfave/cli
+  version: ^1.19.1
+- package: go.uber.org/zap
+  version: ^1.4.1
+- package: github.com/mwitkow/go-proto-validators
