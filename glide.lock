@@ -1,6 +1,17 @@
-hash: 52f80e9af2e82d6828f835dfd71ccdb3fec2aac5c11a64f02def9c0337b9c390
-updated: 2017-06-22T21:07:53.281579687+03:00
+hash: e6389528784226eb914478ee9bbee37803ae7ccb945a63b0e9de7ea73755737b
+updated: 2017-06-23T14:55:53.88637758+03:00
 imports:
+- name: github.com/go-redis/redis
+  version: e14976b254c5bc5f399dd0ae9314b1d02a176897
+- name: github.com/gogo/protobuf
+  version: 100ba4e885062801d56799d78530b73b178a78f3
+  subpackages:
+  - gogoproto
+  - jsonpb
+  - proto
+  - protoc-gen-gogo/descriptor
+  - sortkeys
+  - types
 - name: github.com/golang/protobuf
   version: 9f174c986221c608fb5143bd623b6076a71feae3
   subpackages:
@@ -10,6 +21,7 @@ imports:
   version: f63a7dfb64c138bd93d5c5b896d8b33c4b08e000
   subpackages:
   - recovery
+  - validator
 - name: github.com/mwitkow/go-proto-validators
   version: a55ca57f374a8846924b030f534d8b8211508cf0
 - name: github.com/pkg/errors
@@ -51,7 +63,7 @@ imports:
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc
-  version: 42c095b6c9bdd80d4435b064508c398afdb0ec99
+  version: b15215fb911b24a5d61d57feec4233d610530464
   subpackages:
   - codes
   - credentials

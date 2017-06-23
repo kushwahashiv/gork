@@ -13,6 +13,7 @@ type QueuesRepository interface {
 	Save(ctx context.Context, record *Queue) (err error)
 	Delete(ctx context.Context, id string) (err error)
 	GetById(ctx context.Context, id string) (record *Queue, err error)
+	MGetById(ctx context.Context, ids ...string) (records []*Queue, err error)
 	Find(ctx context.Context, params *CollectionParams) (records []*Queue, info *CollectionInfo, err error)
 }
 
@@ -32,10 +33,10 @@ func NewQueue(name string, settings ...QueueSetting) (queue *Queue) {
 
 // Queue represents a list of tasks of the same type that are pending processing.
 type Queue struct {
-	Id        string         // unique ID
-	Name      string         // unique name
-	Settings  *QueueSettings // settings
-	CreatedAt time.Time      // creation time
+	Id        string            // unique ID
+	Name      string            // unique name
+	Settings  map[string]string // settings
+	CreatedAt time.Time         // creation time
 }
 
 // QueueSettings represents settings of the queue.
