@@ -17,9 +17,10 @@ package proto
 
 import fmt "fmt"
 import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
-import proto1 "github.com/golang/protobuf/proto"
+import proto1 "github.com/gogo/protobuf/proto"
 import math "math"
-import _ "."
+import _ "github.com/gogo/protobuf/gogoproto"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto1.Marshal

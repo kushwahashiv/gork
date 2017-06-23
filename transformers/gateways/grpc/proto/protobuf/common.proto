@@ -1,9 +1,16 @@
 syntax = "proto3";
 
 package gork_gateways_grpc;
-import public "validator.proto";
+import public "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import public "github.com/mwitkow/go-proto-validators/validator.proto";
 
 option go_package = "proto";
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.testgen_all) = true;
+option (gogoproto.benchgen_all) = true;
 
 // Collection wraps message types that are used in collection-related methods.
 message Collection {
@@ -12,7 +19,7 @@ message Collection {
     // that are working with collections (like pagination).
     message Params {
         string cursor = 1;
-        uint32 limit = 2 [(validator.field) = {int_lt: 101}];
+        uint32 limit = 2 [(gogoproto.casttype) = "uint8", (validator.field) = {int_lt: 101}];
     }
 
     // Info represents a statistical information returned from database methods

@@ -4,7 +4,7 @@
 package proto
 
 import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
-import proto1 "github.com/golang/protobuf/proto"
+import proto1 "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
 

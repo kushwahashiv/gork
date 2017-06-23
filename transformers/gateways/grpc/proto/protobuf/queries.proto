@@ -1,6 +1,14 @@
 syntax = "proto3";
+
 package gork_gateways_grpc;
 import "common.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.testgen_all) = true;
+option (gogoproto.benchgen_all) = true;
 
 // Queues service is responsible for management of the queues.
 service Queues {
@@ -55,10 +63,7 @@ message QueuesCmds {
 
     message Read {
         message Request {
-            oneof identifier {
-                string id = 1; // query id
-                string name = 2; // query name
-            }
+            string id = 1; // query id
         }
         message Response {
             Queue record = 1; // queue instance
@@ -68,10 +73,7 @@ message QueuesCmds {
     message Update {
         message Request {
 
-            oneof identifier {
-                string id = 1; // query ID
-                string name = 2; // query name
-            }
+            string id = 1; // query ID
             Data data = 3; // new data
 
             message Data {
@@ -86,10 +88,7 @@ message QueuesCmds {
 
     message Delete {
         message Request {
-            oneof identifier {
-                string id = 1; // query ID
-                string name = 2; // query name
-            }
+            string id = 1; // query ID
         }
         message Response {
             bool result = 1; // operation result
