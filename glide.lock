@@ -1,8 +1,12 @@
 hash: 3b6e0c727b15cafadee405302152782657aee83aaf5d3c91dc5f8e553ac8b80b
-updated: 2017-06-23T19:33:29.044265771+03:00
+updated: 2017-06-24T19:35:25.609177801+03:00
 imports:
+- name: github.com/asaskevich/govalidator
+  version: 7b3beb6df3c42abd3509abfc3bcacc0fbfb7c877
 - name: github.com/go-ozzo/ozzo-validation
   version: d1008ad1fd04ceb5faedaf34881df0c504382706
+  subpackages:
+  - is
 - name: github.com/go-redis/redis
   version: e14976b254c5bc5f399dd0ae9314b1d02a176897
   subpackages:
@@ -29,9 +33,6 @@ imports:
   version: f63a7dfb64c138bd93d5c5b896d8b33c4b08e000
   subpackages:
   - recovery
-  - validator
-- name: github.com/mwitkow/go-proto-validators
-  version: a55ca57f374a8846924b030f534d8b8211508cf0
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/rs/xid

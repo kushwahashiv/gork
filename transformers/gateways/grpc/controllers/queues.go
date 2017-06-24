@@ -1,19 +1,18 @@
 package controllers
 
 import (
-	"context"
-
 	"time"
 
 	"github.com/gork-io/gork/models"
-	"github.com/gork-io/gork/services"
+	"github.com/gork-io/gork/services/resources"
 	"github.com/gork-io/gork/transformers/gateways/grpc/proto"
 	"github.com/pkg/errors"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
 
 // NewQueues creates a new instance of Queues.
-func NewQueues(queuesSvc services.Queues) (ctrl *Queues) {
+func NewQueues(queuesSvc *resources.Queues) (ctrl *Queues) {
 	return &Queues{
 		queuesSvc: queuesSvc,
 	}
@@ -21,9 +20,10 @@ func NewQueues(queuesSvc services.Queues) (ctrl *Queues) {
 
 // Queues controller is a proxy that links GRPC gateway with service layer.
 type Queues struct {
-	queuesSvc services.Queues // queues service
+	queuesSvc *resources.Queues // queues service
 }
 
+// Register registers this controller as a GRPC service implementation.
 func (ctrl *Queues) Register(server *grpc.Server) {
 	proto.RegisterQueuesServer(server, ctrl)
 }
@@ -31,7 +31,7 @@ func (ctrl *Queues) Register(server *grpc.Server) {
 // List returns a subset of the queries, based on collection params given.
 func (ctrl *Queues) List(ctx context.Context, request *proto.QueuesCmds_List_Request) (response *proto.QueuesCmds_List_Response, err error) {
 
-	// Fetch queries
+	// Fetch records
 	records, info, err := ctrl.queuesSvc.List(ctx, models.NewCollectionParams(
 		request.Params.Cursor,
 		request.Params.Limit,
@@ -54,19 +54,19 @@ func (ctrl *Queues) List(ctx context.Context, request *proto.QueuesCmds_List_Req
 // Create creates a new queue.
 func (ctrl *Queues) Create(ctx context.Context, request *proto.QueuesCmds_Create_Request) (response *proto.QueuesCmds_Create_Response, err error) {
 
-	var settings []models.QueueSetting
-	if request.Settings.RateLimit != nil {
-		settings = append(settings, models.QueueWithRateLimit(
-			request.Settings.RateLimit.Tokens,
-			time.Duration(time.Duration(request.Settings.RateLimit.Duration)*time.Second),
-		))
+	// Convert settings
+	settings := make(map[models.QueueSetting]string)
+	for _, setting := range request.Settings {
+		settings[models.QueueSetting(setting.Key)] = setting.Value
 	}
 
-	record, err := ctrl.queuesSvc.Create(ctx, request.Name, settings...)
+	// Create record
+	record, err := ctrl.queuesSvc.Create(ctx, request.Name, settings)
 	if err != nil {
 		return nil, errors.Wrap(err, "create failed")
 	}
 
+	// Return response
 	response = &proto.QueuesCmds_Create_Response{
 		Record: marshalQueue(record),
 	}
@@ -77,19 +77,17 @@ func (ctrl *Queues) Create(ctx context.Context, request *proto.QueuesCmds_Create
 // Read returns query by its id.
 func (ctrl *Queues) Read(ctx context.Context, request *proto.QueuesCmds_Read_Request) (response *proto.QueuesCmds_Read_Response, err error) {
 
+	// Fetch record
 	record, err := ctrl.queuesSvc.Read(ctx, request.Id)
 	if err != nil {
 		return nil, errors.Wrap(err, "read failed")
 	}
 
+	// Return response
 	response = &proto.QueuesCmds_Read_Response{
 		Record: marshalQueue(record),
 	}
 
-	return
-}
-
-func (ctrl *Queues) Update(ctx context.Context, request *proto.QueuesCmds_Update_Request) (response *proto.QueuesCmds_Update_Response, err error) {
 	return
 }
 
@@ -98,6 +96,7 @@ func (ctrl *Queues) Delete(ctx context.Context, request *proto.QueuesCmds_Delete
 
 	response = &proto.QueuesCmds_Delete_Response{}
 
+	// Delete record
 	err = ctrl.queuesSvc.Delete(ctx, request.Id)
 	if err == nil {
 		response.Result = true
@@ -113,15 +112,17 @@ func marshalQueue(input *models.Queue) (output *proto.Queue) {
 		return nil
 	}
 
-	return &proto.Queue{
-		Id:   input.Id,
-		Name: input.Name,
-		Settings: &proto.Queue_Settings{
-			RateLimit: &proto.Queue_Settings_RateLimit{
-				Tokens:   input.Settings.RateLimit.Tokens,
-				Duration: uint32(input.Settings.RateLimit.Duration.Seconds()),
-			},
-		},
+	output = &proto.Queue{
+		Id:        input.Id,
+		Name:      input.Name,
 		CreatedAt: input.CreatedAt.Format(time.RFC3339Nano),
 	}
+	for key, value := range input.Settings {
+		output.Settings = append(output.Settings, &proto.Queue_Setting{
+			Key:   string(key),
+			Value: value,
+		})
+	}
+
+	return
 }

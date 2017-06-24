@@ -5,13 +5,14 @@ import (
 
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"google.golang.org/grpc"
 )
 
 // NewGateway creates a new instance of Gateway.
-func NewGateway() (gateway *Gateway) {
+func NewGateway(listener net.Listener, controllers ...Controller) (gateway *Gateway) {
 	return &Gateway{
+		listener:    listener,
+		controllers: controllers,
 		server: grpc.NewServer(
 			grpc.UnaryInterceptor(
 				grpc_middleware.ChainUnaryServer(

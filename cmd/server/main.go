@@ -6,7 +6,13 @@ import (
 	"os/signal"
 	"sort"
 
+	"net"
+
+	"github.com/go-redis/redis"
+	"github.com/gork-io/gork/services/resources"
 	"github.com/gork-io/gork/transformers/gateways/grpc"
+	"github.com/gork-io/gork/transformers/gateways/grpc/controllers"
+	redis_repo "github.com/gork-io/gork/transformers/repositories/redis"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 	"go.uber.org/zap"
@@ -51,19 +57,38 @@ func action(ctx *cli.Context) (err error) {
 	}
 	defer logger.Sync()
 
-	// Initialize gateways
-	grpcGateway := grpc.NewGateway()
+	// Connect to Redis
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     net.JoinHostPort(config.Db.Redis.Hostname, config.Db.Redis.Port),
+		DB:       config.Db.Redis.Database,
+		Password: config.Db.Redis.Password,
+	})
 
-	// Start server
-	logger.Debug("Server is starting...")
-	server, err := NewServer(ServerWithGateways(
-		grpcGateway,
-	))
+	// Initialize repositories
+	queuesRepo := redis_repo.NewQueuesRepository(redisClient)
+
+	// Initialize services
+	queuesSvc := resources.NewQueues(queuesRepo)
+
+	// Initialize gateways
+	listener, err := net.Listen("tcp", net.JoinHostPort(config.Gtw.Grpc.Hostname, config.Gtw.Grpc.Port))
+	if err != nil {
+		return
+	}
+	grpcGateway := grpc.NewGateway(listener, controllers.NewQueues(queuesSvc))
+
+	// Initialize server
+	server, err := NewServer(ServerWithGateways(grpcGateway))
 	if err != nil {
 		return
 	}
 
+	// Start server
+	logger.Debug("Server is starting...")
 	err = server.Start()
+	if err != nil {
+		return
+	}
 
 	// Run until a quit signal
 	signalChan := make(chan os.Signal, 1)

@@ -18,7 +18,7 @@ func NewServer(options ...ServerOption) (server *Server, err error) {
 		option(server)
 	}
 
-	if len(gateways) == 0 {
+	if len(server.gateways) == 0 {
 		return nil, errors.New("no gateways are given")
 	}
 
@@ -49,8 +49,8 @@ func (srv *Server) Start() (err error) {
 
 	// Wait for error or context
 	select {
-	case err = errors.Wrap(<-errsChan, "gateway failed to start"):
-		return
+	case err = <-errsChan:
+		return errors.Wrap(err, "gateway failed to start")
 	case <-ctx.Done():
 		return
 	}

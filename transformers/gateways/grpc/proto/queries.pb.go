@@ -21,10 +21,10 @@ var _ = math.Inf
 
 // Queue represents a single queue.
 type Queue struct {
-	Id        string          `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name      string          `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Settings  *Queue_Settings `protobuf:"bytes,3,opt,name=settings" json:"settings,omitempty"`
-	CreatedAt string          `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Id        string           `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name      string           `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Settings  []*Queue_Setting `protobuf:"bytes,3,rep,name=settings" json:"settings,omitempty"`
+	CreatedAt string           `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 }
 
 func (m *Queue) Reset()                    { *m = Queue{} }
@@ -32,26 +32,15 @@ func (m *Queue) String() string            { return proto1.CompactTextString(m) 
 func (*Queue) ProtoMessage()               {}
 func (*Queue) Descriptor() ([]byte, []int) { return fileDescriptorQueries, []int{0} }
 
-type Queue_Settings struct {
-	RateLimit *Queue_Settings_RateLimit `protobuf:"bytes,1,opt,name=rate_limit,json=rateLimit" json:"rate_limit,omitempty"`
+type Queue_Setting struct {
+	Key   string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (m *Queue_Settings) Reset()                    { *m = Queue_Settings{} }
-func (m *Queue_Settings) String() string            { return proto1.CompactTextString(m) }
-func (*Queue_Settings) ProtoMessage()               {}
-func (*Queue_Settings) Descriptor() ([]byte, []int) { return fileDescriptorQueries, []int{0, 0} }
-
-type Queue_Settings_RateLimit struct {
-	Tokens   uint64 `protobuf:"varint,1,opt,name=tokens,proto3" json:"tokens,omitempty"`
-	Duration uint32 `protobuf:"varint,2,opt,name=duration,proto3" json:"duration,omitempty"`
-}
-
-func (m *Queue_Settings_RateLimit) Reset()         { *m = Queue_Settings_RateLimit{} }
-func (m *Queue_Settings_RateLimit) String() string { return proto1.CompactTextString(m) }
-func (*Queue_Settings_RateLimit) ProtoMessage()    {}
-func (*Queue_Settings_RateLimit) Descriptor() ([]byte, []int) {
-	return fileDescriptorQueries, []int{0, 0, 0}
-}
+func (m *Queue_Setting) Reset()                    { *m = Queue_Setting{} }
+func (m *Queue_Setting) String() string            { return proto1.CompactTextString(m) }
+func (*Queue_Setting) ProtoMessage()               {}
+func (*Queue_Setting) Descriptor() ([]byte, []int) { return fileDescriptorQueries, []int{0, 0} }
 
 // QueuesCmds is a container that wraps request/response messages of all queue-related RPC commands.
 type QueuesCmds struct {
@@ -102,8 +91,8 @@ func (*QueuesCmds_Create) ProtoMessage()               {}
 func (*QueuesCmds_Create) Descriptor() ([]byte, []int) { return fileDescriptorQueries, []int{1, 1} }
 
 type QueuesCmds_Create_Request struct {
-	Name     string          `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Settings *Queue_Settings `protobuf:"bytes,2,opt,name=settings" json:"settings,omitempty"`
+	Name     string           `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Settings []*Queue_Setting `protobuf:"bytes,2,rep,name=settings" json:"settings,omitempty"`
 }
 
 func (m *QueuesCmds_Create_Request) Reset()         { *m = QueuesCmds_Create_Request{} }
@@ -154,56 +143,13 @@ func (*QueuesCmds_Read_Response) Descriptor() ([]byte, []int) {
 	return fileDescriptorQueries, []int{1, 2, 1}
 }
 
-type QueuesCmds_Update struct {
-}
-
-func (m *QueuesCmds_Update) Reset()                    { *m = QueuesCmds_Update{} }
-func (m *QueuesCmds_Update) String() string            { return proto1.CompactTextString(m) }
-func (*QueuesCmds_Update) ProtoMessage()               {}
-func (*QueuesCmds_Update) Descriptor() ([]byte, []int) { return fileDescriptorQueries, []int{1, 3} }
-
-type QueuesCmds_Update_Request struct {
-	Id   string                          `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Data *QueuesCmds_Update_Request_Data `protobuf:"bytes,3,opt,name=data" json:"data,omitempty"`
-}
-
-func (m *QueuesCmds_Update_Request) Reset()         { *m = QueuesCmds_Update_Request{} }
-func (m *QueuesCmds_Update_Request) String() string { return proto1.CompactTextString(m) }
-func (*QueuesCmds_Update_Request) ProtoMessage()    {}
-func (*QueuesCmds_Update_Request) Descriptor() ([]byte, []int) {
-	return fileDescriptorQueries, []int{1, 3, 0}
-}
-
-type QueuesCmds_Update_Request_Data struct {
-	Name     string          `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Settings *Queue_Settings `protobuf:"bytes,2,opt,name=settings" json:"settings,omitempty"`
-}
-
-func (m *QueuesCmds_Update_Request_Data) Reset()         { *m = QueuesCmds_Update_Request_Data{} }
-func (m *QueuesCmds_Update_Request_Data) String() string { return proto1.CompactTextString(m) }
-func (*QueuesCmds_Update_Request_Data) ProtoMessage()    {}
-func (*QueuesCmds_Update_Request_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptorQueries, []int{1, 3, 0, 0}
-}
-
-type QueuesCmds_Update_Response struct {
-	Record *Queue `protobuf:"bytes,1,opt,name=record" json:"record,omitempty"`
-}
-
-func (m *QueuesCmds_Update_Response) Reset()         { *m = QueuesCmds_Update_Response{} }
-func (m *QueuesCmds_Update_Response) String() string { return proto1.CompactTextString(m) }
-func (*QueuesCmds_Update_Response) ProtoMessage()    {}
-func (*QueuesCmds_Update_Response) Descriptor() ([]byte, []int) {
-	return fileDescriptorQueries, []int{1, 3, 1}
-}
-
 type QueuesCmds_Delete struct {
 }
 
 func (m *QueuesCmds_Delete) Reset()                    { *m = QueuesCmds_Delete{} }
 func (m *QueuesCmds_Delete) String() string            { return proto1.CompactTextString(m) }
 func (*QueuesCmds_Delete) ProtoMessage()               {}
-func (*QueuesCmds_Delete) Descriptor() ([]byte, []int) { return fileDescriptorQueries, []int{1, 4} }
+func (*QueuesCmds_Delete) Descriptor() ([]byte, []int) { return fileDescriptorQueries, []int{1, 3} }
 
 type QueuesCmds_Delete_Request struct {
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -213,7 +159,7 @@ func (m *QueuesCmds_Delete_Request) Reset()         { *m = QueuesCmds_Delete_Req
 func (m *QueuesCmds_Delete_Request) String() string { return proto1.CompactTextString(m) }
 func (*QueuesCmds_Delete_Request) ProtoMessage()    {}
 func (*QueuesCmds_Delete_Request) Descriptor() ([]byte, []int) {
-	return fileDescriptorQueries, []int{1, 4, 0}
+	return fileDescriptorQueries, []int{1, 3, 0}
 }
 
 type QueuesCmds_Delete_Response struct {
@@ -224,13 +170,12 @@ func (m *QueuesCmds_Delete_Response) Reset()         { *m = QueuesCmds_Delete_Re
 func (m *QueuesCmds_Delete_Response) String() string { return proto1.CompactTextString(m) }
 func (*QueuesCmds_Delete_Response) ProtoMessage()    {}
 func (*QueuesCmds_Delete_Response) Descriptor() ([]byte, []int) {
-	return fileDescriptorQueries, []int{1, 4, 1}
+	return fileDescriptorQueries, []int{1, 3, 1}
 }
 
 func init() {
 	proto1.RegisterType((*Queue)(nil), "gork_gateways_grpc.Queue")
-	proto1.RegisterType((*Queue_Settings)(nil), "gork_gateways_grpc.Queue.Settings")
-	proto1.RegisterType((*Queue_Settings_RateLimit)(nil), "gork_gateways_grpc.Queue.Settings.RateLimit")
+	proto1.RegisterType((*Queue_Setting)(nil), "gork_gateways_grpc.Queue.Setting")
 	proto1.RegisterType((*QueuesCmds)(nil), "gork_gateways_grpc.QueuesCmds")
 	proto1.RegisterType((*QueuesCmds_List)(nil), "gork_gateways_grpc.QueuesCmds.List")
 	proto1.RegisterType((*QueuesCmds_List_Request)(nil), "gork_gateways_grpc.QueuesCmds.List.Request")
@@ -241,10 +186,6 @@ func init() {
 	proto1.RegisterType((*QueuesCmds_Read)(nil), "gork_gateways_grpc.QueuesCmds.Read")
 	proto1.RegisterType((*QueuesCmds_Read_Request)(nil), "gork_gateways_grpc.QueuesCmds.Read.Request")
 	proto1.RegisterType((*QueuesCmds_Read_Response)(nil), "gork_gateways_grpc.QueuesCmds.Read.Response")
-	proto1.RegisterType((*QueuesCmds_Update)(nil), "gork_gateways_grpc.QueuesCmds.Update")
-	proto1.RegisterType((*QueuesCmds_Update_Request)(nil), "gork_gateways_grpc.QueuesCmds.Update.Request")
-	proto1.RegisterType((*QueuesCmds_Update_Request_Data)(nil), "gork_gateways_grpc.QueuesCmds.Update.Request.Data")
-	proto1.RegisterType((*QueuesCmds_Update_Response)(nil), "gork_gateways_grpc.QueuesCmds.Update.Response")
 	proto1.RegisterType((*QueuesCmds_Delete)(nil), "gork_gateways_grpc.QueuesCmds.Delete")
 	proto1.RegisterType((*QueuesCmds_Delete_Request)(nil), "gork_gateways_grpc.QueuesCmds.Delete.Request")
 	proto1.RegisterType((*QueuesCmds_Delete_Response)(nil), "gork_gateways_grpc.QueuesCmds.Delete.Response")
@@ -264,7 +205,6 @@ type QueuesClient interface {
 	List(ctx context.Context, in *QueuesCmds_List_Request, opts ...grpc.CallOption) (*QueuesCmds_List_Response, error)
 	Create(ctx context.Context, in *QueuesCmds_Create_Request, opts ...grpc.CallOption) (*QueuesCmds_Create_Response, error)
 	Read(ctx context.Context, in *QueuesCmds_Read_Request, opts ...grpc.CallOption) (*QueuesCmds_Read_Response, error)
-	Update(ctx context.Context, in *QueuesCmds_Update_Request, opts ...grpc.CallOption) (*QueuesCmds_Update_Response, error)
 	Delete(ctx context.Context, in *QueuesCmds_Delete_Request, opts ...grpc.CallOption) (*QueuesCmds_Delete_Response, error)
 }
 
@@ -303,15 +243,6 @@ func (c *queuesClient) Read(ctx context.Context, in *QueuesCmds_Read_Request, op
 	return out, nil
 }
 
-func (c *queuesClient) Update(ctx context.Context, in *QueuesCmds_Update_Request, opts ...grpc.CallOption) (*QueuesCmds_Update_Response, error) {
-	out := new(QueuesCmds_Update_Response)
-	err := grpc.Invoke(ctx, "/gork_gateways_grpc.Queues/Update", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *queuesClient) Delete(ctx context.Context, in *QueuesCmds_Delete_Request, opts ...grpc.CallOption) (*QueuesCmds_Delete_Response, error) {
 	out := new(QueuesCmds_Delete_Response)
 	err := grpc.Invoke(ctx, "/gork_gateways_grpc.Queues/Delete", in, out, c.cc, opts...)
@@ -327,7 +258,6 @@ type QueuesServer interface {
 	List(context.Context, *QueuesCmds_List_Request) (*QueuesCmds_List_Response, error)
 	Create(context.Context, *QueuesCmds_Create_Request) (*QueuesCmds_Create_Response, error)
 	Read(context.Context, *QueuesCmds_Read_Request) (*QueuesCmds_Read_Response, error)
-	Update(context.Context, *QueuesCmds_Update_Request) (*QueuesCmds_Update_Response, error)
 	Delete(context.Context, *QueuesCmds_Delete_Request) (*QueuesCmds_Delete_Response, error)
 }
 
@@ -389,24 +319,6 @@ func _Queues_Read_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Queues_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueuesCmds_Update_Request)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueuesServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gork_gateways_grpc.Queues/Update",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueuesServer).Update(ctx, req.(*QueuesCmds_Update_Request))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Queues_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueuesCmds_Delete_Request)
 	if err := dec(in); err != nil {
@@ -440,10 +352,6 @@ var _Queues_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Read",
 			Handler:    _Queues_Read_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _Queues_Update_Handler,
 		},
 		{
 			MethodName: "Delete",
@@ -481,15 +389,17 @@ func (m *Queue) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintQueries(dAtA, i, uint64(len(m.Name)))
 		i += copy(dAtA[i:], m.Name)
 	}
-	if m.Settings != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintQueries(dAtA, i, uint64(m.Settings.Size()))
-		n1, err := m.Settings.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.Settings) > 0 {
+		for _, msg := range m.Settings {
+			dAtA[i] = 0x1a
+			i++
+			i = encodeVarintQueries(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
 		}
-		i += n1
 	}
 	if len(m.CreatedAt) > 0 {
 		dAtA[i] = 0x22
@@ -500,7 +410,7 @@ func (m *Queue) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func (m *Queue_Settings) Marshal() (dAtA []byte, err error) {
+func (m *Queue_Setting) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -510,48 +420,22 @@ func (m *Queue_Settings) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Queue_Settings) MarshalTo(dAtA []byte) (int, error) {
+func (m *Queue_Setting) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.RateLimit != nil {
+	if len(m.Key) > 0 {
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintQueries(dAtA, i, uint64(m.RateLimit.Size()))
-		n2, err := m.RateLimit.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
+		i = encodeVarintQueries(dAtA, i, uint64(len(m.Key)))
+		i += copy(dAtA[i:], m.Key)
 	}
-	return i, nil
-}
-
-func (m *Queue_Settings_RateLimit) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Queue_Settings_RateLimit) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Tokens != 0 {
-		dAtA[i] = 0x8
+	if len(m.Value) > 0 {
+		dAtA[i] = 0x12
 		i++
-		i = encodeVarintQueries(dAtA, i, uint64(m.Tokens))
-	}
-	if m.Duration != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintQueries(dAtA, i, uint64(m.Duration))
+		i = encodeVarintQueries(dAtA, i, uint64(len(m.Value)))
+		i += copy(dAtA[i:], m.Value)
 	}
 	return i, nil
 }
@@ -611,11 +495,11 @@ func (m *QueuesCmds_List_Request) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintQueries(dAtA, i, uint64(m.Params.Size()))
-		n3, err := m.Params.MarshalTo(dAtA[i:])
+		n1, err := m.Params.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n3
+		i += n1
 	}
 	return i, nil
 }
@@ -639,11 +523,11 @@ func (m *QueuesCmds_List_Response) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintQueries(dAtA, i, uint64(m.Info.Size()))
-		n4, err := m.Info.MarshalTo(dAtA[i:])
+		n2, err := m.Info.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n4
+		i += n2
 	}
 	if len(m.Records) > 0 {
 		for _, msg := range m.Records {
@@ -699,15 +583,17 @@ func (m *QueuesCmds_Create_Request) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintQueries(dAtA, i, uint64(len(m.Name)))
 		i += copy(dAtA[i:], m.Name)
 	}
-	if m.Settings != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintQueries(dAtA, i, uint64(m.Settings.Size()))
-		n5, err := m.Settings.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.Settings) > 0 {
+		for _, msg := range m.Settings {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintQueries(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
 		}
-		i += n5
 	}
 	return i, nil
 }
@@ -731,11 +617,11 @@ func (m *QueuesCmds_Create_Response) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintQueries(dAtA, i, uint64(m.Record.Size()))
-		n6, err := m.Record.MarshalTo(dAtA[i:])
+		n3, err := m.Record.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n6
+		i += n3
 	}
 	return i, nil
 }
@@ -801,125 +687,11 @@ func (m *QueuesCmds_Read_Response) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintQueries(dAtA, i, uint64(m.Record.Size()))
-		n7, err := m.Record.MarshalTo(dAtA[i:])
+		n4, err := m.Record.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n7
-	}
-	return i, nil
-}
-
-func (m *QueuesCmds_Update) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueuesCmds_Update) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	return i, nil
-}
-
-func (m *QueuesCmds_Update_Request) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueuesCmds_Update_Request) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Id) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintQueries(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
-	}
-	if m.Data != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintQueries(dAtA, i, uint64(m.Data.Size()))
-		n8, err := m.Data.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n8
-	}
-	return i, nil
-}
-
-func (m *QueuesCmds_Update_Request_Data) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueuesCmds_Update_Request_Data) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintQueries(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
-	if m.Settings != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintQueries(dAtA, i, uint64(m.Settings.Size()))
-		n9, err := m.Settings.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n9
-	}
-	return i, nil
-}
-
-func (m *QueuesCmds_Update_Response) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueuesCmds_Update_Response) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Record != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintQueries(dAtA, i, uint64(m.Record.Size()))
-		n10, err := m.Record.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n10
+		i += n4
 	}
 	return i, nil
 }
@@ -1032,9 +804,11 @@ func (m *Queue) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovQueries(uint64(l))
 	}
-	if m.Settings != nil {
-		l = m.Settings.Size()
-		n += 1 + l + sovQueries(uint64(l))
+	if len(m.Settings) > 0 {
+		for _, e := range m.Settings {
+			l = e.Size()
+			n += 1 + l + sovQueries(uint64(l))
+		}
 	}
 	l = len(m.CreatedAt)
 	if l > 0 {
@@ -1043,24 +817,16 @@ func (m *Queue) Size() (n int) {
 	return n
 }
 
-func (m *Queue_Settings) Size() (n int) {
+func (m *Queue_Setting) Size() (n int) {
 	var l int
 	_ = l
-	if m.RateLimit != nil {
-		l = m.RateLimit.Size()
+	l = len(m.Key)
+	if l > 0 {
 		n += 1 + l + sovQueries(uint64(l))
 	}
-	return n
-}
-
-func (m *Queue_Settings_RateLimit) Size() (n int) {
-	var l int
-	_ = l
-	if m.Tokens != 0 {
-		n += 1 + sovQueries(uint64(m.Tokens))
-	}
-	if m.Duration != 0 {
-		n += 1 + sovQueries(uint64(m.Duration))
+	l = len(m.Value)
+	if l > 0 {
+		n += 1 + l + sovQueries(uint64(l))
 	}
 	return n
 }
@@ -1116,9 +882,11 @@ func (m *QueuesCmds_Create_Request) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovQueries(uint64(l))
 	}
-	if m.Settings != nil {
-		l = m.Settings.Size()
-		n += 1 + l + sovQueries(uint64(l))
+	if len(m.Settings) > 0 {
+		for _, e := range m.Settings {
+			l = e.Size()
+			n += 1 + l + sovQueries(uint64(l))
+		}
 	}
 	return n
 }
@@ -1150,50 +918,6 @@ func (m *QueuesCmds_Read_Request) Size() (n int) {
 }
 
 func (m *QueuesCmds_Read_Response) Size() (n int) {
-	var l int
-	_ = l
-	if m.Record != nil {
-		l = m.Record.Size()
-		n += 1 + l + sovQueries(uint64(l))
-	}
-	return n
-}
-
-func (m *QueuesCmds_Update) Size() (n int) {
-	var l int
-	_ = l
-	return n
-}
-
-func (m *QueuesCmds_Update_Request) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Id)
-	if l > 0 {
-		n += 1 + l + sovQueries(uint64(l))
-	}
-	if m.Data != nil {
-		l = m.Data.Size()
-		n += 1 + l + sovQueries(uint64(l))
-	}
-	return n
-}
-
-func (m *QueuesCmds_Update_Request_Data) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Name)
-	if l > 0 {
-		n += 1 + l + sovQueries(uint64(l))
-	}
-	if m.Settings != nil {
-		l = m.Settings.Size()
-		n += 1 + l + sovQueries(uint64(l))
-	}
-	return n
-}
-
-func (m *QueuesCmds_Update_Response) Size() (n int) {
 	var l int
 	_ = l
 	if m.Record != nil {
@@ -1354,10 +1078,8 @@ func (m *Queue) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Settings == nil {
-				m.Settings = &Queue_Settings{}
-			}
-			if err := m.Settings.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.Settings = append(m.Settings, &Queue_Setting{})
+			if err := m.Settings[len(m.Settings)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1411,7 +1133,7 @@ func (m *Queue) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Queue_Settings) Unmarshal(dAtA []byte) error {
+func (m *Queue_Setting) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1434,17 +1156,17 @@ func (m *Queue_Settings) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: Settings: wiretype end group for non-group")
+			return fmt.Errorf("proto: Setting: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Settings: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: Setting: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RateLimit", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
 			}
-			var msglen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowQueries
@@ -1454,113 +1176,50 @@ func (m *Queue_Settings) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				stringLen |= (uint64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthQueries
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + intStringLen
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.RateLimit == nil {
-				m.RateLimit = &Queue_Settings_RateLimit{}
-			}
-			if err := m.RateLimit.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			m.Key = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQueries(dAtA[iNdEx:])
-			if err != nil {
-				return err
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
 			}
-			if skippy < 0 {
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQueries
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthQueries
 			}
-			if (iNdEx + skippy) > l {
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Queue_Settings_RateLimit) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQueries
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: RateLimit: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: RateLimit: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Tokens", wireType)
-			}
-			m.Tokens = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQueries
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Tokens |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Duration", wireType)
-			}
-			m.Duration = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQueries
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Duration |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
+			m.Value = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipQueries(dAtA[iNdEx:])
@@ -2013,10 +1672,8 @@ func (m *QueuesCmds_Create_Request) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Settings == nil {
-				m.Settings = &Queue_Settings{}
-			}
-			if err := m.Settings.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.Settings = append(m.Settings, &Queue_Setting{})
+			if err := m.Settings[len(m.Settings)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2254,363 +1911,6 @@ func (m *QueuesCmds_Read_Request) Unmarshal(dAtA []byte) error {
 	return nil
 }
 func (m *QueuesCmds_Read_Response) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQueries
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Response: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Response: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Record", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQueries
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQueries
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Record == nil {
-				m.Record = &Queue{}
-			}
-			if err := m.Record.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQueries(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthQueries
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueuesCmds_Update) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQueries
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Update: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Update: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQueries(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthQueries
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueuesCmds_Update_Request) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQueries
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Request: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Request: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQueries
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQueries
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Id = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQueries
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQueries
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Data == nil {
-				m.Data = &QueuesCmds_Update_Request_Data{}
-			}
-			if err := m.Data.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQueries(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthQueries
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueuesCmds_Update_Request_Data) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQueries
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Data: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Data: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQueries
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQueries
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Name = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Settings", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQueries
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQueries
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Settings == nil {
-				m.Settings = &Queue_Settings{}
-			}
-			if err := m.Settings.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQueries(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthQueries
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueuesCmds_Update_Response) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3000,42 +2300,36 @@ var (
 func init() { proto1.RegisterFile("queries.proto", fileDescriptorQueries) }
 
 var fileDescriptorQueries = []byte{
-	// 589 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x55, 0xcb, 0x6e, 0xd3, 0x40,
-	0x14, 0xed, 0xb8, 0xc6, 0x4d, 0x6e, 0x28, 0x8b, 0x59, 0x54, 0xe9, 0x08, 0xac, 0x28, 0x08, 0x29,
-	0x12, 0xc5, 0x12, 0xe9, 0x82, 0x55, 0x41, 0x90, 0x8a, 0x87, 0xe8, 0x02, 0x06, 0xb1, 0x41, 0x42,
-	0x61, 0x88, 0xa7, 0x91, 0xd5, 0xd8, 0x93, 0xce, 0x8c, 0x05, 0x7c, 0x01, 0xe2, 0x0f, 0xfa, 0x03,
-	0xf0, 0x0b, 0xb0, 0x41, 0x62, 0x59, 0xb1, 0xe2, 0x13, 0x20, 0xfc, 0x08, 0xf2, 0xcc, 0xd8, 0x29,
-	0x8f, 0xd4, 0x41, 0x6c, 0xd8, 0x79, 0x46, 0xe7, 0x9e, 0x73, 0xcf, 0xb9, 0x77, 0x64, 0x58, 0x3f,
-	0xcc, 0xb9, 0x4c, 0xb8, 0x8a, 0xa6, 0x52, 0x68, 0x81, 0xf1, 0x58, 0xc8, 0x83, 0xe1, 0x98, 0x69,
-	0xfe, 0x82, 0xbd, 0x52, 0xc3, 0xb1, 0x9c, 0x8e, 0xc8, 0xd9, 0x91, 0x48, 0x53, 0x91, 0x59, 0x44,
-	0xf7, 0xad, 0x07, 0x67, 0x1e, 0xe6, 0x3c, 0xe7, 0xf8, 0x1c, 0x78, 0x49, 0xdc, 0x46, 0x1d, 0xd4,
-	0x6b, 0x52, 0x2f, 0x89, 0x31, 0x06, 0x3f, 0x63, 0x29, 0x6f, 0x7b, 0xe6, 0xc6, 0x7c, 0xe3, 0xeb,
-	0xd0, 0x50, 0x5c, 0xeb, 0x24, 0x1b, 0xab, 0xf6, 0x6a, 0x07, 0xf5, 0x5a, 0xfd, 0x6e, 0xf4, 0xbb,
-	0x44, 0x64, 0x08, 0xa3, 0x47, 0x0e, 0x49, 0xab, 0x1a, 0x7c, 0x01, 0x60, 0x24, 0x39, 0xd3, 0x3c,
-	0x1e, 0x32, 0xdd, 0xf6, 0x0d, 0x73, 0xd3, 0xdd, 0xdc, 0xd4, 0xe4, 0x08, 0x41, 0xa3, 0xac, 0xc2,
-	0xf7, 0x01, 0x24, 0xd3, 0x7c, 0x38, 0x49, 0xd2, 0x44, 0x9b, 0xbe, 0x5a, 0xfd, 0xad, 0x7a, 0xb5,
-	0x88, 0x32, 0xcd, 0xf7, 0x8a, 0x1a, 0xda, 0x94, 0xe5, 0x27, 0xb9, 0x01, 0xcd, 0xea, 0x1e, 0x6f,
-	0x40, 0xa0, 0xc5, 0x01, 0xcf, 0x94, 0x61, 0xf5, 0xa9, 0x3b, 0x61, 0x02, 0x8d, 0x38, 0x97, 0x4c,
-	0x27, 0x22, 0x33, 0xae, 0xd7, 0x69, 0x75, 0xee, 0xbe, 0x0f, 0x00, 0x8c, 0x90, 0x1a, 0xa4, 0xb1,
-	0x22, 0x9f, 0x11, 0xf8, 0x7b, 0x89, 0xd2, 0xe4, 0x2e, 0xac, 0x51, 0x7e, 0x98, 0x73, 0xa5, 0xf1,
-	0x0e, 0x04, 0x53, 0x26, 0x59, 0xaa, 0x5c, 0xb3, 0x97, 0xfe, 0xd4, 0xec, 0x40, 0x4c, 0x26, 0x7c,
-	0x54, 0x50, 0x46, 0x0f, 0x0c, 0x98, 0xba, 0x22, 0xf2, 0x12, 0x1a, 0x94, 0xab, 0xa9, 0xc8, 0x14,
-	0xc7, 0xd7, 0xc0, 0x4f, 0xb2, 0x7d, 0xe1, 0x88, 0x2e, 0xd6, 0x10, 0xdd, 0xcb, 0xf6, 0x05, 0x35,
-	0x05, 0x78, 0x1b, 0xd6, 0x24, 0x1f, 0x09, 0x19, 0xab, 0xb6, 0xd7, 0x59, 0xed, 0xb5, 0xfa, 0x9b,
-	0x0b, 0x13, 0xa3, 0x25, 0x92, 0xbc, 0x43, 0x10, 0x0c, 0xcc, 0x10, 0xc8, 0xd3, 0xb9, 0x9d, 0x72,
-	0xfe, 0x68, 0xc1, 0xfc, 0xbd, 0xbf, 0x9f, 0x3f, 0xd9, 0x39, 0xe1, 0xf1, 0x2a, 0x04, 0xb6, 0x01,
-	0xe7, 0xf2, 0x94, 0x4e, 0x1d, 0x90, 0x3c, 0x03, 0x9f, 0x72, 0x16, 0x93, 0xcd, 0x79, 0x97, 0xbf,
-	0x6c, 0xed, 0xbf, 0x2a, 0xbc, 0xf6, 0x20, 0x78, 0x3c, 0x8d, 0x8b, 0x28, 0x3e, 0xa2, 0x85, 0x2a,
-	0xf8, 0x36, 0xf8, 0x31, 0xd3, 0xcc, 0xbd, 0x81, 0xfe, 0x42, 0x5e, 0xb3, 0x2c, 0x91, 0x25, 0x8c,
-	0x1c, 0x59, 0xb4, 0xcb, 0x34, 0xa3, 0xa6, 0x9e, 0x3c, 0x01, 0xbf, 0x38, 0xfd, 0x8f, 0x59, 0xdf,
-	0x81, 0x60, 0x97, 0x4f, 0xb8, 0xe6, 0xa7, 0xa5, 0xdd, 0x3d, 0xa1, 0xb1, 0x51, 0x68, 0xa8, 0x7c,
-	0x62, 0xdf, 0x6a, 0x83, 0xba, 0x53, 0xff, 0x8d, 0x0f, 0x81, 0x0d, 0x03, 0x33, 0xfb, 0x68, 0xf0,
-	0xe5, 0x9a, 0xc0, 0x0a, 0x50, 0x19, 0x17, 0xd9, 0x5a, 0x0e, 0xec, 0xba, 0x18, 0x97, 0xab, 0x8c,
-	0xaf, 0xd4, 0xd4, 0x59, 0x58, 0x25, 0x13, 0x2d, 0x0b, 0x77, 0x42, 0xcc, 0xee, 0x62, 0xad, 0x97,
-	0x02, 0xb4, 0xb4, 0x17, 0x07, 0x9e, 0x7b, 0xb1, 0xab, 0x53, 0xeb, 0xe5, 0xe7, 0x0d, 0xab, 0xf5,
-	0x52, 0xc1, 0xe7, 0x42, 0x76, 0xd6, 0xb5, 0x42, 0x16, 0xb6, 0xb4, 0x50, 0x05, 0xb7, 0x42, 0xb7,
-	0xce, 0x1f, 0x7f, 0x0b, 0x57, 0x3e, 0xcc, 0x42, 0xf4, 0x69, 0x16, 0xa2, 0xe3, 0x59, 0x88, 0xbe,
-	0xcc, 0x42, 0xf4, 0x75, 0x16, 0xa2, 0xa3, 0xef, 0xe1, 0xca, 0xf3, 0xc0, 0xfc, 0x92, 0xb6, 0x7f,
-	0x04, 0x00, 0x00, 0xff, 0xff, 0xcc, 0x35, 0x93, 0x77, 0xc5, 0x06, 0x00, 0x00,
+	// 494 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x94, 0xc1, 0x6e, 0xd3, 0x4c,
+	0x10, 0xc7, 0xbb, 0x8e, 0xeb, 0xa4, 0xd3, 0xef, 0x43, 0x68, 0x85, 0x90, 0xbb, 0x02, 0xab, 0x04,
+	0x21, 0x55, 0x02, 0x2c, 0x35, 0x3d, 0x70, 0xca, 0x01, 0x82, 0x04, 0x48, 0x1c, 0x60, 0xb9, 0x22,
+	0x85, 0xc5, 0x9e, 0x5a, 0x56, 0x6d, 0x6f, 0xea, 0x5d, 0x03, 0x7d, 0x13, 0x8e, 0x5c, 0xb8, 0xf1,
+	0x00, 0x1c, 0x38, 0x70, 0xac, 0x38, 0xf1, 0x08, 0x60, 0x5e, 0x04, 0x65, 0x77, 0x93, 0x54, 0x40,
+	0x9a, 0x20, 0x6e, 0xbb, 0xeb, 0xdf, 0xcc, 0x7f, 0xfe, 0x33, 0x23, 0xc3, 0xff, 0xc7, 0x0d, 0xd6,
+	0x39, 0xaa, 0x78, 0x52, 0x4b, 0x2d, 0x29, 0xcd, 0x64, 0x7d, 0x34, 0xce, 0x84, 0xc6, 0xd7, 0xe2,
+	0x44, 0x8d, 0xb3, 0x7a, 0x92, 0xb0, 0xff, 0x12, 0x59, 0x96, 0xb2, 0xb2, 0x44, 0xff, 0x13, 0x81,
+	0xcd, 0xa7, 0x0d, 0x36, 0x48, 0x2f, 0x80, 0x97, 0xa7, 0x21, 0xd9, 0x25, 0x7b, 0x5b, 0xdc, 0xcb,
+	0x53, 0x4a, 0xc1, 0xaf, 0x44, 0x89, 0xa1, 0x67, 0x5e, 0xcc, 0x99, 0x0e, 0xa1, 0xa7, 0x50, 0xeb,
+	0xbc, 0xca, 0x54, 0xd8, 0xd9, 0xed, 0xec, 0x6d, 0x0f, 0xae, 0xc5, 0xbf, 0x4b, 0xc4, 0x26, 0x61,
+	0xfc, 0xcc, 0x92, 0x7c, 0x1e, 0x42, 0xaf, 0x02, 0x24, 0x35, 0x0a, 0x8d, 0xe9, 0x58, 0xe8, 0xd0,
+	0x37, 0x89, 0xb7, 0xdc, 0xcb, 0x5d, 0xcd, 0xf6, 0xa1, 0xeb, 0x62, 0xe8, 0x45, 0xe8, 0x1c, 0xe1,
+	0x89, 0xab, 0x66, 0x7a, 0xa4, 0x97, 0x60, 0xf3, 0x95, 0x28, 0x9a, 0x59, 0x3d, 0xf6, 0xd2, 0xff,
+	0xe0, 0x03, 0x18, 0x35, 0x35, 0x2a, 0x53, 0xc5, 0xbe, 0x10, 0xf0, 0x1f, 0xe7, 0x4a, 0xb3, 0x87,
+	0xd0, 0xe5, 0x78, 0xdc, 0xa0, 0xd2, 0x74, 0x08, 0xc1, 0x44, 0xd4, 0xa2, 0x54, 0x26, 0xdb, 0xf6,
+	0xe0, 0xc6, 0x9f, 0x2a, 0x1e, 0xc9, 0xa2, 0xc0, 0x44, 0xe7, 0xb2, 0x8a, 0x9f, 0x18, 0x98, 0xbb,
+	0x20, 0xf6, 0x06, 0x7a, 0x1c, 0xd5, 0x44, 0x56, 0x0a, 0xe9, 0x1d, 0xf0, 0xf3, 0xea, 0x50, 0xba,
+	0x44, 0xd7, 0x57, 0x24, 0x7a, 0x54, 0x1d, 0x4a, 0x6e, 0x02, 0xe8, 0x01, 0x74, 0x6b, 0x4c, 0x64,
+	0x9d, 0xaa, 0xd0, 0x33, 0x6d, 0xdb, 0x59, 0xda, 0x36, 0x3e, 0x23, 0xd9, 0x7b, 0x02, 0xc1, 0xc8,
+	0x34, 0x87, 0x3d, 0x5f, 0xd8, 0x99, 0x8d, 0x85, 0x2c, 0x19, 0x8b, 0xf7, 0xd7, 0x63, 0x61, 0xc3,
+	0x33, 0x16, 0xf7, 0x21, 0xb0, 0xfa, 0xce, 0xe4, 0x39, 0x85, 0x3a, 0x90, 0xbd, 0x00, 0x9f, 0xa3,
+	0x48, 0xd9, 0xce, 0xa2, 0xc8, 0x5f, 0x76, 0xe9, 0x5f, 0x15, 0x1e, 0x40, 0x70, 0x1f, 0x0b, 0xd4,
+	0x78, 0x9e, 0x46, 0xff, 0x8c, 0xc6, 0xe5, 0xa9, 0x86, 0x6a, 0x0a, 0x6d, 0xbe, 0xf7, 0xb8, 0xbb,
+	0x0d, 0xde, 0x75, 0x20, 0xb0, 0xeb, 0x42, 0x85, 0xdd, 0x14, 0x7a, 0x73, 0xa9, 0xbc, 0x59, 0xa9,
+	0x78, 0x0a, 0xc5, 0x4e, 0x93, 0xdd, 0x5a, 0x0f, 0x76, 0x55, 0x64, 0xb3, 0xf9, 0xd1, 0xdb, 0x2b,
+	0xe2, 0x2c, 0x36, 0x97, 0x89, 0xd7, 0xc5, 0x9d, 0x90, 0xb0, 0x13, 0x58, 0xe9, 0x65, 0x0a, 0xad,
+	0xed, 0xc5, 0xc1, 0x0b, 0x2f, 0x76, 0x04, 0x2b, 0xbd, 0x58, 0x6c, 0x6d, 0x2f, 0x73, 0xdc, 0x0a,
+	0xdd, 0xbb, 0x72, 0xfa, 0x3d, 0xda, 0xf8, 0xd8, 0x46, 0xe4, 0x73, 0x1b, 0x91, 0xd3, 0x36, 0x22,
+	0x5f, 0xdb, 0x88, 0x7c, 0x6b, 0x23, 0xf2, 0xf6, 0x47, 0xb4, 0xf1, 0x32, 0x30, 0x7f, 0xad, 0x83,
+	0x9f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xb0, 0xad, 0xd2, 0xea, 0xe8, 0x04, 0x00, 0x00,
 }

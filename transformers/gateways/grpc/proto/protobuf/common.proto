@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package gork_gateways_grpc;
 import public "github.com/gogo/protobuf/gogoproto/gogo.proto";
-import public "github.com/mwitkow/go-proto-validators/validator.proto";
 
 option go_package = "proto";
 option (gogoproto.marshaler_all) = true;
@@ -19,7 +18,7 @@ message Collection {
     // that are working with collections (like pagination).
     message Params {
         string cursor = 1;
-        uint32 limit = 2 [(gogoproto.casttype) = "uint8", (validator.field) = {int_lt: 101}];
+        uint32 limit = 2 [(gogoproto.casttype) = "uint8"];
     }
 
     // Info represents a statistical information returned from database methods

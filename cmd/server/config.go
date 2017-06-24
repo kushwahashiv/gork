@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/urfave/cli"
 )
 
@@ -29,15 +31,15 @@ var cliFlags = []cli.Flag{
 		EnvVar: envPrefix("DB_REDIS_PASSWORD"),
 	},
 	cli.StringFlag{
-		Name:   "gtw-rest-hostname",
-		Usage:  "REST gateway hostname.",
-		EnvVar: envPrefix("GTW_REST_HOSTNAME"),
+		Name:   "gtw-grpc-hostname",
+		Usage:  "GRPC gateway hostname.",
+		EnvVar: envPrefix("GTW_GRPC_HOSTNAME"),
 	},
 	cli.StringFlag{
-		Name:   "gtw-rest-port",
-		Usage:  "REST gateway port.",
-		EnvVar: envPrefix("GTW_REST_PORT"),
-		Value:  "8080",
+		Name:   "gtw-grpc-port",
+		Usage:  "GRPC gateway port.",
+		EnvVar: envPrefix("GTW_GRPC_PORT"),
+		Value:  "8443",
 	},
 	cli.BoolFlag{
 		Name:   "debug, d",
@@ -70,7 +72,7 @@ func NewConfigFromCtx(ctx *cli.Context) (cfg *config, err error) {
 			},
 		},
 		Gtw: &configGtw{
-			Rest: &configGtwRest{
+			Grpc: &configGtwGrpc{
 				Hostname: ctx.String("gtw-rest-hostname"),
 				Port:     ctx.String("gtw-rest-port"),
 			},
@@ -136,24 +138,24 @@ func (c *configDbRedis) Validate() (err error) {
 
 // configGtw represents gateways configuration.
 type configGtw struct {
-	Rest *configGtwRest
+	Grpc *configGtwGrpc
 }
 
 // Validate is responsible for data validation.
 func (c *configGtw) Validate() (err error) {
 	return validation.ValidateStruct(c,
-		validation.Field(&c.Rest, validation.Required),
+		validation.Field(&c.Grpc, validation.Required),
 	)
 }
 
-// configGtwRest represents REST gateway configuration.
-type configGtwRest struct {
+// configGtwGrpc represents GRPC gateway configuration.
+type configGtwGrpc struct {
 	Hostname string
 	Port     string
 }
 
 // Validate is responsible for data validation.
-func (c *configGtwRest) Validate() (err error) {
+func (c *configGtwGrpc) Validate() (err error) {
 	return validation.ValidateStruct(c,
 		validation.Field(&c.Hostname, is.Host),
 		validation.Field(&c.Port, validation.Required, is.Port),

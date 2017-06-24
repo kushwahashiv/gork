@@ -10,25 +10,25 @@ import (
 )
 
 // NewQueues creates a new instance of Queues.
-func NewQueues(queuesRepo models.QueuesRepository) (svc *Queues) {
+func NewQueues(queuesRepo models.QueuesRepository) (res *Queues) {
 	return &Queues{
 		queuesRepo: queuesRepo,
 	}
 }
 
-// Queues service implements operations that are related to the queues management.
+// Queues resource service implements operations that are related to the queues management.
 type Queues struct {
 	queuesRepo models.QueuesRepository // queues repository
 }
 
 // List returns a subset of the queries, based on collection params given.
-func (svc *Queues) List(
+func (res *Queues) List(
 	ctx context.Context,
 	params *models.CollectionParams,
 ) (records []*models.Queue, info *models.CollectionInfo, err error) {
 
 	// Retrieve collection from the repo
-	records, info, err = svc.queuesRepo.Find(ctx, params)
+	records, info, err = res.queuesRepo.Find(ctx, params)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "repository Find failed")
 	}
@@ -37,7 +37,7 @@ func (svc *Queues) List(
 }
 
 // Create creates a new queue instance and saves it to the repository.
-func (svc *Queues) Create(
+func (res *Queues) Create(
 	ctx context.Context,
 	name string,
 	settings map[models.QueueSetting]string,
@@ -48,13 +48,13 @@ func (svc *Queues) Create(
 		"name": validateQueueName(name),
 	}
 	for key, value := range settings {
-		vErr["settings["+key+"]"] = validateQueueSetting(key, value)
+		vErr["settings["+string(key)+"]"] = validateQueueSetting(key, value)
 	}
 	vErr.Filter()
 	if vErr != nil {
 		return nil, errors.Wrap(err, "validation error")
 	}
-	existing, err := svc.queuesRepo.GetByName(ctx, name)
+	existing, err := res.queuesRepo.GetByName(ctx, name)
 	if err != nil {
 		return nil, errors.Wrap(err, "repository GetByName failed")
 	}
@@ -63,7 +63,7 @@ func (svc *Queues) Create(
 	}
 
 	// Save record to the repo
-	err = svc.queuesRepo.Save(ctx, models.NewQueue(name, settings))
+	err = res.queuesRepo.Save(ctx, models.NewQueue(name, settings))
 	if err != nil {
 		return nil, errors.Wrap(err, "repository Save failed")
 	}
@@ -72,10 +72,10 @@ func (svc *Queues) Create(
 }
 
 // Read returns query by its ID.
-func (svc *Queues) Read(ctx context.Context, id string) (record *models.Queue, err error) {
+func (res *Queues) Read(ctx context.Context, id string) (record *models.Queue, err error) {
 
 	// Retrieve record from the repo
-	record, err = svc.queuesRepo.GetById(ctx, id)
+	record, err = res.queuesRepo.GetById(ctx, id)
 	if err != nil {
 		return nil, errors.Wrap(err, "repository GetById failed")
 	}
@@ -84,8 +84,8 @@ func (svc *Queues) Read(ctx context.Context, id string) (record *models.Queue, e
 }
 
 // Delete removes queue with given ID from the repository.
-func (svc *Queues) Delete(ctx context.Context, id string) (err error) {
-	return errors.Wrap(svc.queuesRepo.Delete(ctx, id), "repository Delete failed")
+func (res *Queues) Delete(ctx context.Context, id string) (err error) {
+	return errors.Wrap(res.queuesRepo.Delete(ctx, id), "repository Delete failed")
 }
 
 // validateQueueName checks that queue name is valid.

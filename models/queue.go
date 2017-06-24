@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	QueueSettingRateLimitEnabled  QueueSetting = "rate-limit:enabled"
-	QueueSettingRateLimitTokens   QueueSetting = "rate-limit:tokens"
-	QueueSettingRateLimitDuration QueueSetting = "rate-limit:duration"
+	QueueSettingRateLimitEnabled  QueueSetting = "rate-limit.enabled"
+	QueueSettingRateLimitTokens   QueueSetting = "rate-limit.tokens"
+	QueueSettingRateLimitDuration QueueSetting = "rate-limit.duration"
 )
 
 var (
@@ -24,11 +24,17 @@ var (
 
 // QueuesRepository is an interface that all queues storage should implement.
 type QueuesRepository interface {
+	// Save persists given queue instance to the repo.
 	Save(ctx context.Context, record *Queue) (err error)
+	// Delete removes queue with given ID from the repo.
 	Delete(ctx context.Context, id string) (err error)
+	// GetById retrieves queue with given ID from the repo.
 	GetById(ctx context.Context, id string) (record *Queue, err error)
+	// GetByName retrieves queue with given name from the repo.
 	GetByName(ctx context.Context, name string) (record *Queue, err error)
-	MGetById(ctx context.Context, ids ...string) (records []*Queue, err error)
+	// MGetById retrieves queues with given IDs from the repo.
+	MGetById(ctx context.Context, ids []string) (records []*Queue, err error)
+	// Find returns a subset of the queries, based on collection params given.
 	Find(ctx context.Context, params *CollectionParams) (records []*Queue, info *CollectionInfo, err error)
 }
 
